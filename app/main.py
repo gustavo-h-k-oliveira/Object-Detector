@@ -1,10 +1,10 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from app.yolov8_model import detect_objects
+from fastapi.responses import JSONResponse
+from app.yolov8_model import detect_objects, detect_and_render
 
 app = FastAPI()
 
-# Libera CORS (útil para integrar com o frontend depois)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -22,3 +22,9 @@ async def detect(file: UploadFile = File(...)):
     image_bytes = await file.read()
     results = detect_objects(image_bytes)
     return {"results": results}
+
+@app.post("/detect/image")
+async def detect_with_image(file: UploadFile = File(...)):
+    image_bytes = await file.read()
+    base64_img = detect_and_render(image_bytes)
+    return JSONResponse(content={"image_base64": base64_img})
