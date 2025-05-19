@@ -1,3 +1,4 @@
+import "./App.css";
 import { useState } from "react";
 
 function App() {
@@ -19,7 +20,7 @@ function App() {
 
     setLoading(true);
     try {
-      const res = await fetch("https://8000-gustavohkol-objectdetec-trgpe5t3imf.ws-us118.gitpod.io/detect/image", {
+      const res = await fetch("https://expert-space-halibut-w6j697rxppg3g74r-8000.app.github.dev/detect/image", { // URL do seu backend
         method: "POST",
         body: formData,
       });
@@ -34,29 +35,29 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6 flex flex-col items-center">
-      <h1 className="text-3xl font-bold mb-6">Detector de Objetos com YOLOv8</h1>
+    <div className="body-bg">
+      <h1 className="title">Detector de Objetos com YOLOv8</h1>
 
       <input
         type="file"
         accept="image/*"
         onChange={handleImageUpload}
-        className="mb-4"
+        className="input-file"
       />
 
-      {loading && <p className="text-yellow-400">Detectando objetos...</p>}
+      {loading && <p className="text-yellow">Detectando objetos...</p>}
 
       {imagePreview && (
         <div className="mb-4">
           <p className="text-sm mb-1">Imagem original:</p>
-          <img src={imagePreview} alt="Preview" className="max-w-md rounded" />
+          <img src={imagePreview} alt="Preview" className="img-preview" />
         </div>
       )}
 
       {base64Result && (
         <div>
           <p className="text-sm mb-1">Imagem com objetos detectados:</p>
-          <img src={base64Result} alt="Detecção YOLO" className="max-w-md rounded border border-green-500" />
+          <img src={base64Result} alt="Detecção YOLO" className="img-result" />
         </div>
       )}
     </div>
