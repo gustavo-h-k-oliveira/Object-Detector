@@ -5,10 +5,26 @@ function App() {
   const [imagePreview, setImagePreview] = useState(null);
   const [base64Result, setBase64Result] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleImageUpload = async (event) => {
+    setError(null);
     const file = event.target.files[0];
     if (!file) return;
+
+    // Validação do tipo de arquivo
+    const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+    if (!validTypes.includes(file.type)) {
+      setError("Por favor, envie uma imagem JPEG ou PNG.");
+      return;
+    }
+
+    // Validação do tamanho do arquivo (ex: 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      setError("O tamanho máximo permitido é 5MB.");
+      return;
+    }
 
     // Previsão local para visualização antes da requisição
     const reader = new FileReader();
@@ -20,7 +36,7 @@ function App() {
 
     setLoading(true);
     try {
-      const res = await fetch("https://expert-space-halibut-w6j697rxppg3g74r-8000.app.github.dev/detect/image", { // URL do seu backend
+      const res = await fetch("https://expert-space-halibut-w6j697rxppg3g74r-8000.app.github.dev/detect/image", {
         method: "POST",
         body: formData,
       });
@@ -28,6 +44,7 @@ function App() {
       const data = await res.json();
       setBase64Result(`data:image/jpeg;base64,${data.image_base64}`);
     } catch (err) {
+      setError("Erro ao enviar imagem.");
       console.error("Erro ao enviar imagem:", err);
     } finally {
       setLoading(false);
@@ -44,6 +61,8 @@ function App() {
         onChange={handleImageUpload}
         className="input-file"
       />
+
+      {error && <p style={{ color: "#f87171", marginBottom: "1rem" }}>{error}</p>}
 
       {loading && <p className="text-yellow">Detectando objetos...</p>}
 
