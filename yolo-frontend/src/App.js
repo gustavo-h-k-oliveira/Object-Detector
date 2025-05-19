@@ -6,9 +6,11 @@ function App() {
   const [base64Result, setBase64Result] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   const handleImageUpload = async (event) => {
     setError(null);
+    setSuccess(false);
     const file = event.target.files[0];
     if (!file) return;
 
@@ -43,9 +45,9 @@ function App() {
 
       const data = await res.json();
       setBase64Result(`data:image/jpeg;base64,${data.image_base64}`);
+      setSuccess(true);
     } catch (err) {
       setError("Erro ao enviar imagem.");
-      console.error("Erro ao enviar imagem:", err);
     } finally {
       setLoading(false);
     }
@@ -63,8 +65,14 @@ function App() {
       />
 
       {error && <p style={{ color: "#f87171", marginBottom: "1rem" }}>{error}</p>}
+      {success && <p style={{ color: "#22c55e", marginBottom: "1rem" }}>Objetos detectados com sucesso!</p>}
 
-      {loading && <p className="text-yellow">Detectando objetos...</p>}
+      {loading && (
+        <div>
+          <div className="spinner"></div>
+          <p className="text-processing">Detectando objetos...</p>
+        </div>
+      )}
 
       {imagePreview && (
         <div className="mb-4">
